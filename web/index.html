@@ -67,6 +67,16 @@ body{
   z-index:-1;
 }
 
+/* radar sweep effect */
+.radar-sweep{
+  position:fixed;
+  inset:0;
+  background:radial-gradient(circle at center, rgba(0,245,255,0.05) 0%, transparent 60%);
+  animation:rotate 8s linear infinite;
+  pointer-events:none;
+  z-index:-1;
+}
+
 /* phone */
 
 .phone{
@@ -522,9 +532,9 @@ body{
 </head>
 
 <body>
+<div class="radar-sweep"></div>
 
-<div class="grid"></div>
-<div class="glow"></div>
+
 
 <div class="phone">
 
@@ -894,3 +904,4 @@ function closeModal(){
 
 </body>
 </html>
+
