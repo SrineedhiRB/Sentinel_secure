@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sentinel Secure™ - Offline Biometric Gateway</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+
+<style>
+
+:root{
+  --bg:#050816;
+  --surface:#0c1224;
+  --surface2:#121b34;
+  --card:#11192e;
+  --border:#1c2b4d;
+  --cyan:#00f5ff;
+  --green:#05ff82;
+  --red:#ff3d57;
+  --orange:#ffb000;
+  --text:#e6edf7;
+  --muted:#94a3b8;
+}
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Outfit',sans-serif;
+  height:100vh;
+  overflow:hidden;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+/* background */
+
+.grid{
+  position:fixed;
+  inset:0;
+  background-image:
+    linear-gradient(rgba(0,245,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,245,255,0.03) 1px, transparent 1px);
+  background-size:40px 40px;
+  z-index:-2;
+}
+
+.glow{
+  position:fixed;
+  width:700px;
+  height:700px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(0,245,255,0.08), transparent 70%);
+  filter:blur(60px);
+  z-index:-1;
+}
+
+/* phone */
+
+.phone{
+  width:420px;
+  height:860px;
+  background:linear-gradient(180deg,#09111f,#0d1528);
+  border:2px solid var(--border);
+  border-radius:38px;
+  overflow:hidden;
+  position:relative;
+  box-shadow:
+  0 30px 60px rgba(0,0,0,0.7),
+  0 0 40px rgba(0,245,255,0.15);
+}
+
+.header{
+  height:48px;
+  border-bottom:1px solid rgba(255,255,255,0.05);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 24px;
+  font-size:12px;
+}
+
+.status{
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+
+.dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 10px var(--green);
+}
+
+.screen{
+  position:absolute;
+  inset:48px 0 0 0;
+  display:none;
+  flex-direction:column;
+  overflow:auto;
+}
+
+.screen.active{
+  display:flex;
+}
+
+/* splash */
+
+#splash{
+  justify-content:center;
+  align-items:center;
+  padding:30px;
+}
+
+.logo{
+  width:130px;
+  height:130px;
+  border-radius:50%;
+  border:2px solid var(--cyan);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  margin-bottom:28px;
+  animation:pulse 2s infinite;
+}
+
+.logo i{
+  font-size:70px;
+  color:var(--cyan);
+}
+
+.title{
+  font-family:'Orbitron',sans-serif;
+  font-size:26px;
+  font-weight:700;
+  letter-spacing:2px;
+  margin-bottom:10px;
+}
+
+.subtitle{
+  font-size:11px;
+  color:var(--muted);
+  letter-spacing:2px;
+  margin-bottom:30px;
+}
+
+.console{
+  width:100%;
+  height:220px;
+  background:#04060c;
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:14px;
+  overflow:hidden;
+  font-family:'Orbitron',sans-serif;
+  font-size:10px;
+}
+
+.console-line{
+  margin-bottom:8px;
+  color:#b8c5ff;
+}
+
+.console-line::before{
+  content:"> ";
+  color:var(--cyan);
+}
+
+/* login */
+
+#login{
+  justify-content:flex-end;
+  padding:24px;
+}
+
+.brand{
+  text-align:center;
+  margin-bottom:28px;
+}
+
+.brand i{
+  color:var(--cyan);
+  font-size:52px;
+  margin-bottom:10px;
+}
+
+.card{
+  background:rgba(18,27,52,0.8);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:18px;
+  margin-bottom:20px;
+}
+
+.label{
+  font-size:10px;
+  color:var(--muted);
+  margin-bottom:10px;
+  letter-spacing:1px;
+  font-weight:600;
+}
+
+.role{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:12px;
+  background:#0f172b;
+  border-radius:12px;
+  border:1px solid var(--border);
+}
+
+.role i{
+  color:var(--cyan);
+}
+
+.pin{
+  display:flex;
+  justify-content:center;
+  gap:16px;
+  margin:20px 0;
+}
+
+.pin div{
+  width:14px;
+  height:14px;
+  border-radius:50%;
+  border:2px solid var(--border);
+}
+
+.pin div.fill{
+  background:var(--cyan);
+  border-color:var(--cyan);
+  box-shadow:0 0 12px var(--cyan);
+}
+
+.keys{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:16px;
+  justify-items:center;
+}
+
+.key{
+  width:72px;
+  height:72px;
+  border-radius:50%;
+  border:1px solid var(--border);
+  background:#11192f;
+  color:#fff;
+  font-size:24px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  cursor:pointer;
+}
+
+.key:active{
+  transform:scale(0.94);
+  background:var(--cyan);
+  color:#000;
+}
+
+/* home */
+
+#home{
+  padding:22px;
+}
+
+.top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:22px;
+}
+
+.top h3{
+  font-family:'Orbitron';
+  font-size:18px;
+}
+
+.banner{
+  background:rgba(18,27,52,0.9);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:18px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  margin-bottom:24px;
+}
+
+.avatar{
+  width:56px;
+  height:56px;
+  border-radius:50%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:rgba(0,245,255,0.1);
+  border:1px solid rgba(0,245,255,0.2);
+}
+
+.avatar i{
+  font-size:30px;
+  color:var(--cyan);
+}
+
+.badge{
+  margin-top:6px;
+  display:inline-block;
+  background:rgba(0,245,255,0.1);
+  color:var(--cyan);
+  padding:4px 8px;
+  border-radius:6px;
+  font-size:9px;
+  font-weight:700;
+}
+
+.section{
+  font-size:11px;
+  letter-spacing:1px;
+  color:var(--muted);
+  margin-bottom:12px;
+  font-weight:700;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-bottom:24px;
+}
+
+.stat{
+  background:#0d1426;
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:14px;
+}
+
+.stat small{
+  color:var(--muted);
+  font-size:9px;
+}
+
+.stat h4{
+  margin-top:12px;
+  font-size:14px;
+}
+
+.menu{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.menu button{
+  background:rgba(18,27,52,0.85);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:16px;
+  display:flex;
+  gap:16px;
+  align-items:center;
+  color:#fff;
+  cursor:pointer;
+}
+
+.menu button:hover{
+  border-color:var(--cyan);
+}
+
+.menu button i{
+  color:var(--cyan);
+}
+
+/* camera */
+
+#camera{
+  background:#000;
+}
+
+.cam{
+  flex:1;
+  position:relative;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.cam video{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.scanbox{
+  position:absolute;
+  width:260px;
+  height:320px;
+  border:2px solid rgba(0,245,255,0.3);
+  border-radius:40px;
+  overflow:hidden;
+}
+
+.scanline{
+  position:absolute;
+  width:100%;
+  height:2px;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+  animation:scan 3s linear infinite;
+}
+
+.challenge{
+  position:absolute;
+  top:20px;
+  left:20px;
+  right:20px;
+  background:rgba(10,15,30,0.95);
+  border:2px solid var(--cyan);
+  border-radius:16px;
+  padding:14px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.challenge i{
+  color:var(--cyan);
+}
+
+.footer{
+  background:#09111f;
+  border-top:1px solid var(--border);
+  padding:20px;
+}
+
+.footer h4{
+  margin-bottom:6px;
+}
+
+.footer p{
+  font-size:11px;
+  color:var(--muted);
+}
+
+/* alert */
+
+.modal{
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,0.75);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:100;
+}
+
+.alert{
+  width:85%;
+  background:#11192f;
+  border:2px solid var(--green);
+  border-radius:18px;
+  padding:24px;
+  text-align:center;
+}
+
+.alert i{
+  font-size:52px;
+  color:var(--green);
+  margin-bottom:16px;
+}
+
+.alert h3{
+  margin-bottom:10px;
+}
+
+.alert p{
+  color:var(--muted);
+  font-size:13px;
+  margin-bottom:20px;
+}
+
+.alert button{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:12px;
+  background:rgba(5,255,130,0.1);
+  color:var(--green);
+  font-weight:700;
+  cursor:pointer;
+}
+
+@keyframes pulse{
+  0%{transform:scale(1);}
+  50%{transform:scale(1.05);}
+  100%{transform:scale(1);}
+}
+
+@keyframes scan{
+  0%{top:0;}
+  100%{top:100%;}
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="grid"></div>
+<div class="glow"></div>
+
+<div class="phone">
+
+<div class="header">
+<div>23:48</div>
+
+<div class="status">
+<i class="material-icons-round" style="font-size:14px;">gps_fixed</i>
+<i class="material-icons-round" style="font-size:14px;">wifi_off</i>
+<div class="dot"></div>
+</div>
+</div>
+
+<!-- modal -->
+
+<div class="modal" id="modal">
+<div class="alert">
+<i class="material-icons-round">verified_user</i>
+<h3>ACCESS VERIFIED</h3>
+<p>Secure offline biometric authentication successful.</p>
+<button onclick="closeModal()">CLOSE</button>
+</div>
+</div>
+
+<!-- splash -->
+
+<div class="screen active" id="splash">
+
+<div class="logo">
+<i class="material-icons-round">fingerprint</i>
+</div>
+
+<div class="title">SENTINEL SECURE</div>
+<div class="subtitle">OFFLINE BIOMETRIC GATEWAY</div>
+
+<div class="console" id="console"></div>
+
+</div>
+
+<!-- login -->
+
+<div class="screen" id="login">
+
+<div class="brand">
+<i class="material-icons-round">security</i>
+<h2>SENTINEL ACCESS</h2>
+</div>
+
+<div class="card">
+<div class="label">TERMINAL OPERATOR</div>
+
+<div class="role">
+<i class="material-icons-round">local_police</i>
+<div>
+<div style="font-weight:700;">Inspector Vikram Singh</div>
+<div style="font-size:10px;color:var(--muted);">
+Role: Highway Officer
+</div>
+</div>
+</div>
+
+</div>
+
+<div class="label" style="text-align:center;">
+ENTER SECURITY PIN
+</div>
+
+<div class="pin">
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+</div>
+
+<div class="keys">
+
+<div class="key" onclick="press(1)">1</div>
+<div class="key" onclick="press(2)">2</div>
+<div class="key" onclick="press(3)">3</div>
+
+<div class="key" onclick="press(4)">4</div>
+<div class="key" onclick="press(5)">5</div>
+<div class="key" onclick="press(6)">6</div>
+
+<div class="key" onclick="press(7)">7</div>
+<div class="key" onclick="press(8)">8</div>
+<div class="key" onclick="press(9)">9</div>
+
+<div class="key">
+<i class="material-icons-round">fingerprint</i>
+</div>
+
+<div class="key" onclick="press(0)">0</div>
+
+<div class="key" onclick="backspace()">
+<i class="material-icons-round">backspace</i>
+</div>
+
+</div>
+
+<div style="margin-top:16px;text-align:center;font-size:11px;color:var(--muted)">
+Demo PIN: 8899
+</div>
+
+</div>
+
+<!-- home -->
+
+<div class="screen" id="home">
+
+<div class="top">
+<h3>OFFLINE ACCESS</h3>
+
+<i class="material-icons-round"
+style="color:var(--red);cursor:pointer;"
+onclick="go('login')">logout</i>
+</div>
+
+<div class="banner">
+
+<div class="avatar">
+<i class="material-icons-round">local_police</i>
+</div>
+
+<div>
+<h3>Inspector Vikram Singh</h3>
+<div class="badge">HIGHWAY OFFICER</div>
+</div>
+
+</div>
+
+<div class="section">VAULT TELEMETRY</div>
+
+<div class="stats">
+
+<div class="stat">
+<small>LOCAL PROFILES</small>
+<h4>32 Profiles</h4>
+</div>
+
+<div class="stat">
+<small>UNSYNCED LOGS</small>
+<h4>8 Queue</h4>
+</div>
+
+<div class="stat">
+<small>ENCRYPTION</small>
+<h4>AES-256</h4>
+</div>
+
+<div class="stat">
+<small>AI ENGINE</small>
+<h4>TFLITE ACTIVE</h4>
+</div>
+
+</div>
+
+<div class="section">OPERATIONAL SUITE</div>
+
+<div class="menu">
+
+<button onclick="go('camera')">
+<i class="material-icons-round">face</i>
+<div>
+<div style="font-weight:700;">Biometric Verification</div>
+<div style="font-size:11px;color:var(--muted)">
+Execute live liveness detection
+</div>
+</div>
+</button>
+
+<button>
+<i class="material-icons-round">receipt_long</i>
+<div>
+<div style="font-weight:700;">Audit Vault</div>
+<div style="font-size:11px;color:var(--muted)">
+Review encrypted logs
+</div>
+</div>
+</button>
+
+<button>
+<i class="material-icons-round">sync</i>
+<div>
+<div style="font-weight:700;">Offline Sync</div>
+<div style="font-size:11px;color:var(--muted)">
+Secure government uplink
+</div>
+</div>
+</button>
+
+</div>
+
+</div>
+
+<!-- camera -->
+
+<div class="screen" id="camera">
+
+<div class="cam">
+
+<video autoplay muted></video>
+
+<div class="challenge">
+<i class="material-icons-round">remove_red_eye</i>
+
+<div>
+<div style="font-size:10px;color:var(--cyan);font-weight:700;">
+LIVENESS CHALLENGE
+</div>
+
+<div style="font-weight:700;">
+Blink Eyes 2 Times
+</div>
+</div>
+</div>
+
+<div class="scanbox">
+<div class="scanline"></div>
+</div>
+
+</div>
+
+<div class="footer">
+<h4>SCANNING BIOMETRICS...</h4>
+<p>Running MobileFaceNet + Anti-Spoof AI</p>
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+const logs = [
+"Initializing Secure Vault...",
+"Verifying AI Runtime...",
+"Loading Face Embedding Model...",
+"Checking Anti-Spoof Engine...",
+"SQLCipher Database Mounted...",
+"Edge AI Runtime Active...",
+"System Ready."
+];
+
+const consoleBox = document.getElementById("console");
+
+let i=0;
+
+const interval = setInterval(()=>{
+  const div = document.createElement("div");
+  div.className="console-line";
+  div.innerText=logs[i];
+  consoleBox.appendChild(div);
+
+  i++;
+
+  if(i===logs.length){
+    clearInterval(interval);
+
+    setTimeout(()=>{
+      go('login');
+    },1200);
+  }
+},700);
+
+function go(id){
+
+  document.querySelectorAll(".screen")
+  .forEach(s=>s.classList.remove("active"));
+
+  document.getElementById(id)
+  .classList.add("active");
+
+  if(id==="camera"){
+    startCamera();
+  }
+}
+
+let pin="";
+
+function press(num){
+
+  if(pin.length<4){
+    pin += num;
+  }
+
+  updateDots();
+
+  if(pin.length===4){
+
+    setTimeout(()=>{
+
+      if(pin==="8899"){
+        go('home');
+      }else{
+        alert("Invalid PIN");
+      }
+
+      pin="";
+      updateDots();
+
+    },200);
+
+  }
+
+}
+
+function backspace(){
+  pin=pin.slice(0,-1);
+  updateDots();
+}
+
+function updateDots(){
+
+  const dots=document.querySelectorAll(".pin div");
+
+  dots.forEach((d,i)=>{
+    if(i<pin.length){
+      d.classList.add("fill");
+    }else{
+      d.classList.remove("fill");
+    }
+  });
+
+}
+
+function startCamera(){
+
+  navigator.mediaDevices.getUserMedia({
+    video:true
+  }).then(stream=>{
+
+    document.querySelector("video").srcObject=stream;
+
+    setTimeout(()=>{
+      document.querySelector(".footer h4")
+      .innerText="IDENTITY VERIFIED";
+
+      document.querySelector(".footer p")
+      .innerText="Confidence: 98.4% | Liveness: PASS";
+
+      document.getElementById("modal")
+      .style.display="flex";
+
+    },5000);
+
+  }).catch(()=>{
+
+    document.querySelector(".footer h4")
+    .innerText="CAMERA ACCESS BLOCKED";
+
+    document.querySelector(".footer p")
+    .innerText="Using simulated biometric preview";
+
+  });
+
+}
+
+function closeModal(){
+  document.getElementById("modal")
+  .style.display="none";
+
+  go('home');
+}
+
+</script>
+
+</body>
+</html>
